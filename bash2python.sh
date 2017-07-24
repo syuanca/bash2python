@@ -13,6 +13,9 @@ fi
 
 bashfile=$1
 pythonfile="$bashfile".py
+special='"''"''"'
+newspecial='\''"''\''"''\''"'
+slash='\\'
 
 echo "import os" > $pythonfile
 echo "import sys" >> $pythonfile
@@ -26,8 +29,8 @@ echo "bashfile='/tmp/'+bashfile+'.sh'" >> $pythonfile
 echo "" >> $pythonfile
 
 echo "f = open(bashfile, 'w')" >> $pythonfile
-echo 's = """' >> $pythonfile
-while read line; do echo "$line" >> $pythonfile ;  done < $bashfile
+echo -n 's = """' >> $pythonfile
+while IFS= read -r line; do line=${line//$slash/$slash}; line=${line//$special/$newspecial}; echo "$line" >> $pythonfile ;  done < $bashfile
 echo '"""' >> $pythonfile
 echo "f.write(s)" >> $pythonfile
 echo "f.close()" >> $pythonfile
